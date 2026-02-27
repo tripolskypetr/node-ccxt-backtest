@@ -1,0 +1,343 @@
+27/02/2026 21:32
+{
+  "message": "Strategy name is required",
+  "data": {
+    "stack": "Error: Strategy name is required\n    at Object.construct (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:36:30)\n    at file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:582:23\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:631:20\n    at async main$4 (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:2043:5)",
+    "message": "Strategy name is required"
+  }
+}
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 81
+Function: dumpStackTrace
+Method: none
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 110
+Function: ErrorService.handleGlobalError
+Method: handleGlobalError
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 120
+Function: anonymous
+Method: none
+---
+File: node:events
+Line: 519
+Function: emit
+Method: emit
+---
+File: node:internal/process/promises
+Line: 250
+Function: emitUnhandledRejection
+Method: none
+---
+File: node:internal/process/promises
+Line: 385
+Function: throwUnhandledRejectionsMode
+Method: none
+---
+File: node:internal/process/promises
+Line: 470
+Function: processPromiseRejections
+Method: none
+---
+File: node:internal/process/task_queues
+Line: 96
+Function: processTicksAndRejections
+Method: none
+---
+
+27/02/2026 21:38
+{
+  "message": "Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts",
+  "data": {
+    "stack": "Error: Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts\n    at Object.construct (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:36:30)\n    at LOAD_ENTRY_FN (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:257:11)\n    at async ResolveService.attachEntryPoint (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:280:17)\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:574:13\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:635:20\n    at async main$4 (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:2059:5)",
+    "message": "Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts"
+  }
+}
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 81
+Function: dumpStackTrace
+Method: none
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 110
+Function: ErrorService.handleGlobalError
+Method: handleGlobalError
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 120
+Function: anonymous
+Method: none
+---
+File: node:events
+Line: 519
+Function: emit
+Method: emit
+---
+File: node:internal/process/promises
+Line: 250
+Function: emitUnhandledRejection
+Method: none
+---
+File: node:internal/process/promises
+Line: 385
+Function: throwUnhandledRejectionsMode
+Method: none
+---
+File: node:internal/process/promises
+Line: 470
+Function: processPromiseRejections
+Method: none
+---
+File: node:internal/process/task_queues
+Line: 96
+Function: processTicksAndRejections
+Method: none
+---
+
+27/02/2026 21:39
+{
+  "message": "Strategy name is required",
+  "data": {
+    "stack": "Error: Strategy name is required\n    at Object.construct (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:36:30)\n    at file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:586:23\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:635:20\n    at async main$4 (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:2060:5)",
+    "message": "Strategy name is required"
+  }
+}
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 81
+Function: dumpStackTrace
+Method: none
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 110
+Function: ErrorService.handleGlobalError
+Method: handleGlobalError
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 120
+Function: anonymous
+Method: none
+---
+File: node:events
+Line: 519
+Function: emit
+Method: emit
+---
+File: node:internal/process/promises
+Line: 250
+Function: emitUnhandledRejection
+Method: none
+---
+File: node:internal/process/promises
+Line: 385
+Function: throwUnhandledRejectionsMode
+Method: none
+---
+File: node:internal/process/promises
+Line: 470
+Function: processPromiseRejections
+Method: none
+---
+File: node:internal/process/task_queues
+Line: 96
+Function: processTicksAndRejections
+Method: none
+---
+
+27/02/2026 21:41
+{
+  "message": "Strategy name is required",
+  "data": {
+    "stack": "Error: Strategy name is required\n    at Object.construct (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:36:30)\n    at file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:586:23\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:635:20\n    at async main$4 (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:2060:5)",
+    "message": "Strategy name is required"
+  }
+}
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 81
+Function: dumpStackTrace
+Method: none
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 110
+Function: ErrorService.handleGlobalError
+Method: handleGlobalError
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 120
+Function: anonymous
+Method: none
+---
+File: node:events
+Line: 519
+Function: emit
+Method: emit
+---
+File: node:internal/process/promises
+Line: 250
+Function: emitUnhandledRejection
+Method: none
+---
+File: node:internal/process/promises
+Line: 385
+Function: throwUnhandledRejectionsMode
+Method: none
+---
+File: node:internal/process/promises
+Line: 470
+Function: processPromiseRejections
+Method: none
+---
+File: node:internal/process/task_queues
+Line: 96
+Function: processTicksAndRejections
+Method: none
+---
+
+27/02/2026 21:49
+{
+  "message": "Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts",
+  "data": {
+    "stack": "Error: Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts\n    at Object.construct (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:36:30)\n    at LOAD_ENTRY_FN (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:257:11)\n    at async ResolveService.attachEntryPoint (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:280:17)\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:574:13\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:635:20\n    at async main$4 (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:2059:5)",
+    "message": "Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts"
+  }
+}
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 81
+Function: dumpStackTrace
+Method: none
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 110
+Function: ErrorService.handleGlobalError
+Method: handleGlobalError
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 120
+Function: anonymous
+Method: none
+---
+File: node:events
+Line: 519
+Function: emit
+Method: emit
+---
+File: node:internal/process/promises
+Line: 250
+Function: emitUnhandledRejection
+Method: none
+---
+File: node:internal/process/promises
+Line: 385
+Function: throwUnhandledRejectionsMode
+Method: none
+---
+File: node:internal/process/promises
+Line: 470
+Function: processPromiseRejections
+Method: none
+---
+File: node:internal/process/task_queues
+Line: 96
+Function: processTicksAndRejections
+Method: none
+---
+
+27/02/2026 21:50
+{
+  "message": "Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts",
+  "data": {
+    "stack": "Error: Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts\n    at Object.construct (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:36:30)\n    at LOAD_ENTRY_FN (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:257:11)\n    at async ResolveService.attachEntryPoint (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:280:17)\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:574:13\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:635:20\n    at async main$4 (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:2059:5)",
+    "message": "Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts"
+  }
+}
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 81
+Function: dumpStackTrace
+Method: none
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 110
+Function: ErrorService.handleGlobalError
+Method: handleGlobalError
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 120
+Function: anonymous
+Method: none
+---
+File: node:events
+Line: 519
+Function: emit
+Method: emit
+---
+File: node:internal/process/promises
+Line: 250
+Function: emitUnhandledRejection
+Method: none
+---
+File: node:internal/process/promises
+Line: 385
+Function: throwUnhandledRejectionsMode
+Method: none
+---
+File: node:internal/process/promises
+Line: 470
+Function: processPromiseRejections
+Method: none
+---
+File: node:internal/process/task_queues
+Line: 96
+Function: processTicksAndRejections
+Method: none
+---
+
+27/02/2026 21:50
+{
+  "message": "Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts",
+  "data": {
+    "stack": "Error: Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts\n    at Object.construct (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:36:30)\n    at LOAD_ENTRY_FN (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:257:11)\n    at async ResolveService.attachEntryPoint (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:280:17)\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:574:13\n    at async file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:635:20\n    at async main$4 (file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs:2059:5)",
+    "message": "Failed to load entry point: C:\\Users\\User\\Documents\\GitHub\\node-ccxt-backtest\\example\\trailing_stop.strategy.ts"
+  }
+}
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 81
+Function: dumpStackTrace
+Method: none
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 110
+Function: ErrorService.handleGlobalError
+Method: handleGlobalError
+---
+File: file:///C:/Users/User/Documents/GitHub/node-ccxt-backtest/node_modules/@backtest-kit/cli/build/index.mjs
+Line: 120
+Function: anonymous
+Method: none
+---
+File: node:events
+Line: 519
+Function: emit
+Method: emit
+---
+File: node:internal/process/promises
+Line: 250
+Function: emitUnhandledRejection
+Method: none
+---
+File: node:internal/process/promises
+Line: 385
+Function: throwUnhandledRejectionsMode
+Method: none
+---
+File: node:internal/process/promises
+Line: 470
+Function: processPromiseRejections
+Method: none
+---
+File: node:internal/process/task_queues
+Line: 96
+Function: processTicksAndRejections
+Method: none
+---
+

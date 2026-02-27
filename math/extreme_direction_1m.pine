@@ -1,0 +1,51 @@
+//@version=5
+indicator("Extreme Direction Fixed", overlay=true)
+
+plotcandle(open, high, low, close, 
+     color=close > open ? color.new(color.green, 70) : color.new(color.red, 70),
+     wickcolor=color.new(color.gray, 70),
+     bordercolor=color.new(color.gray, 70))
+
+// === INPUTS ===
+period1 = input.int(100, "Period 1")
+period2 = input.int(200, "Period 2")
+period3 = input.int(300, "Period 3")
+countLookback = input.int(50, "Lookback")  // увеличил
+minBalanceForTrend = input.int(3, "Min Balance to Change Trend")  // порог
+
+// === EXTREMES DETECTION ===
+h100 = ta.highest(high, period1)
+l100 = ta.lowest(low, period1)
+h200 = ta.highest(high, period2)
+l200 = ta.lowest(low, period2)
+h300 = ta.highest(high, period3)
+l300 = ta.lowest(low, period3)
+
+isHigh = (high == h100 ? 1 : 0) + (high == h200 ? 1 : 0) + (high == h300 ? 1 : 0)
+isLow = (low == l100 ? 1 : 0) + (low == l200 ? 1 : 0) + (low == l300 ? 1 : 0)
+
+// === COUNT ===
+totalHighs = math.sum(isHigh, countLookback)
+totalLows = math.sum(isLow, countLookback)
+balance = totalHighs - totalLows
+
+// === TREND С ПОРОГОМ (гистерезис) ===
+var int trend = 0
+
+if balance >= minBalanceForTrend
+    trend := 1   // бычий
+else if balance <= -minBalanceForTrend
+    trend := -1  // медвежий
+// иначе trend остаётся прежним
+
+trendColor = trend == 1 ? color.green : trend == -1 ? color.red : color.gray
+
+// === PLOT ===
+plot(close, "Close", color=trendColor, linewidth=4)
+
+plotshape(high == h100, "H100", shape.triangleup, location.abovebar, color.aqua, size=size.tiny)
+plotshape(low == l100, "L100", shape.triangledown, location.belowbar, color.fuchsia, size=size.tiny)
+
+// === OUTPUTS FOR BOT ===
+plot(balance, "Balance", display=display.data_window)
+plot(trend, "Trend", display=display.data_window)

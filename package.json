@@ -1,32 +1,28 @@
 {
   "name": "node-ccxt-backtest",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "description": "Backtest Kit trading bot project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "start": "dotenv -e .env -- node ./index.mjs",
-    "test": "node ./src/test.mjs"
+    "start": "npx @backtest-kit/cli ./strategies/feb_2024/index.mjs --backtest --ui --noCache",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tripolskypetr/sidekick3.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/tripolskypetr/sidekick3/issues"
+  },
+  "homepage": "https://github.com/tripolskypetr/sidekick3#readme",
   "dependencies": {
-    "@ai-sdk/groq": "^3.0.22",
-    "@backtest-kit/pinets": "^3.0.13",
-    "@backtest-kit/ui": "^3.0.9",
-    "agent-swarm-kit": "^1.2.4",
-    "ai": "^6.0.79",
-    "backtest-kit": "^3.0.17",
-    "ccxt": "^4.4.41",
-    "functools-kit": "^1.0.95",
-    "uuid": "^11.0.3",
-    "zod": "^3.25.76"
-  },
-  "devDependencies": {
-    "dotenv-cli": "^7.4.2"
-  },
-  "keywords": [
-    "backtest",
-    "trading",
-    "crypto",
-    "bot"
-  ]
+    "@backtest-kit/cli": "^3.4.2",
+    "@backtest-kit/graph": "^3.4.0",
+    "@backtest-kit/pinets": "^3.4.0",
+    "backtest-kit": "^3.4.0"
+  }
 }
