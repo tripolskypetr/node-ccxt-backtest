@@ -1,7 +1,6 @@
 import { extract, run, File } from "@backtest-kit/pinets";
 import {
   addStrategySchema,
-  listStrategySchema,
   Cache,
 } from "backtest-kit";
 import { randomString } from "functools-kit";
