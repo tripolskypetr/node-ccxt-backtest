@@ -51,7 +51,7 @@ const plots = await run(
   {
     symbol: "BTCUSDT",
     timeframe: "15m",
-    limit: 200,
+    limit: 300,
   },
   "ccxt-exchange",
   new Date("2024-02-15T12:00:00.000Z"),

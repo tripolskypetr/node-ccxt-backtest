@@ -1,0 +1,35 @@
+{
+  "id": "9dfa7252-7236-4000-ae64-ae8ca2fbf000",
+  "priceOpen": 42402.35396773833,
+  "position": "short",
+  "priceTakeProfit": 41636.446383591494,
+  "priceStopLoss": 42763.926808204254,
+  "minuteEstimatedTime": 480,
+  "note": "",
+  "symbol": "BTCUSDT",
+  "exchangeName": "ccxt-exchange",
+  "strategyName": "feb_2024_strategy",
+  "frameName": "feb_2024_frame",
+  "scheduledAt": 1706797800000,
+  "pendingAt": 1706797800000,
+  "_isScheduled": false,
+  "_entry": [
+    {
+      "price": 42402.35396773833
+    }
+  ],
+  "originalPriceOpen": 42402.35396773833,
+  "originalPriceStopLoss": 42763.926808204254,
+  "originalPriceTakeProfit": 41636.446383591494,
+  "partialExecuted": 0,
+  "totalEntries": 1,
+  "status": "closed",
+  "priority": 1772280135305,
+  "pnl": {
+    "pnlPercentage": -1.2556807629065545,
+    "priceOpen": 42402.35396773833,
+    "priceClose": 42763.926808204254
+  },
+  "createdAt": 1706797800000,
+  "updatedAt": 1706800140000
+}

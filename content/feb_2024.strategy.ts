@@ -5,6 +5,7 @@ import {
   addRiskSchema,
   addStrategySchema,
   Cache,
+  getAveragePrice,
   getCandles,
   getDate,
 } from "backtest-kit";
@@ -57,7 +58,7 @@ const emaTrendNode = sourceNode(
         {
           symbol,
           timeframe: "15m",
-          limit: 200,
+          limit: 300,
         },
       );
       return extract(plots, {
@@ -76,8 +77,9 @@ const GARCH_STEPS = 32;
 const garchNode = sourceNode(
   Cache.fn(
     async (symbol) => {
+      const currentPrice = await getAveragePrice(symbol);
       const candles = await getCandles(symbol, "15m", 1_000);
-      return predictRange(candles, "15m", GARCH_STEPS, 0.95);
+      return predictRange(candles, "15m", GARCH_STEPS, currentPrice, 0.95);
     },
     { interval: "15m", key: ([symbol]) => symbol },
   ),
@@ -100,13 +102,16 @@ const strategySignal = outputNode(
         return null;
     }
 
-    // EMA slope threshold: 0.05% change over 6 bars (90 min) = trend active
-    const isBull = ema.emaSlope > 0.05;
-    const isBear = ema.emaSlope < -0.05;
+    // EMA slope threshold: 0.02% over 6 bars (90 min) = EMA visibly rising/falling
+    // Filters slope=0.001 noise (EMA effectively flat) while keeping weak but real trends
+    const isBull = ema.emaSlope > 0.02;
+    const isBear = ema.emaSlope < -0.02;
 
     // RSI pullback entry: enter when momentum temporarily exhausted within trend
-    const longEntry  = isBull && ema.rsi < 40;
-    const shortEntry = isBear && ema.rsi > 60;
+    // Threshold 45 (not 30/40): Feb 2024 was a strong bull run — RSI rarely drops below 40
+    // during uptrend. 45 captures real intraday pullbacks without being too permissive.
+    const longEntry  = isBull && ema.rsi < 45;
+    const shortEntry = isBear && ema.rsi > 55;
 
 
     if (!longEntry && !shortEntry) {
@@ -117,15 +122,13 @@ const strategySignal = outputNode(
     const isLong = longEntry;
     const price = ema.close;
 
-    // Dynamic TP/SL from GARCH log-normal bands (no magic constants)
-    const rawTP = isLong ? garch.upperPrice : garch.lowerPrice;
-    const rawSL = isLong ? garch.lowerPrice : garch.upperPrice;
+    // TP = GARCH upper/lower band (confidence=0.95, ~±1.96σ over 32 bars)
+    // SL = half the TP distance → guaranteed 2:1 R:R regardless of sigma magnitude
+    const tp = isLong ? garch.upperPrice : garch.lowerPrice;
+    const tpDist = Math.abs(tp - price);
+    const sl = isLong ? price - tpDist / 2 : price + tpDist / 2;
 
-    // Enforce minimum 2:1 R:R — SL never worse than 0.75%
-    const tp = rawTP;
-    const sl = isLong
-      ? Math.max(rawSL, price * 0.9925)
-      : Math.min(rawSL, price * 1.0075);
+    console.log("Opened", date);
 
     return {
       id: randomString(),
