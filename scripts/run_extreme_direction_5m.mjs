@@ -5,6 +5,12 @@ import ccxt from "ccxt";
 
 const SIGNAL_SCHEMA = {
   trend: "Trend",
+  balance: "Balance",
+  close: "Close",
+  totalHighs: "TotalHighs",
+  totalLows: "TotalLows",
+  isHigh: "IsHigh",
+  isLow: "IsLow",
 };
 
 const SIGNAL_ID = randomString();
@@ -44,14 +50,14 @@ addExchangeSchema({
 });
 
 const plots = await run(
-  File.fromPath("extreme_direction_1m.pine", "./math"),
+  File.fromPath("extreme_direction_5m.pine", "./math"),
   {
     symbol: "BTCUSDT",
-    timeframe: "1m",
-    limit: 240,
+    timeframe: "5m",
+    limit: 600,
   },
   "ccxt-exchange",
-  new Date("2025-09-23T23:00:00.000Z"),
+  new Date("2025-09-24T12:00:00.000Z"),
 );
 
 console.log(await toMarkdown(SIGNAL_ID, plots, SIGNAL_SCHEMA));

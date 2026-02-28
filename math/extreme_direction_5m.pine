@@ -1,5 +1,5 @@
 //@version=5
-indicator("Extreme Direction Fixed", overlay=true)
+indicator("Extreme Direction 5m", overlay=true)
 
 plotcandle(open, high, low, close, 
      color=close > open ? color.new(color.green, 70) : color.new(color.red, 70),
@@ -49,3 +49,8 @@ plotshape(low == l100, "L100", shape.triangledown, location.belowbar, color.fuch
 // === OUTPUTS FOR BOT ===
 plot(balance, "Balance", display=display.data_window)
 plot(trend, "Trend", display=display.data_window)
+plot(close, "Close", display=display.data_window)
+plot(totalHighs, "TotalHighs", display=display.data_window)
+plot(totalLows, "TotalLows", display=display.data_window)
+plot(isHigh, "IsHigh", display=display.data_window)
+plot(isLow, "IsLow", display=display.data_window)
