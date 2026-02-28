@@ -33,15 +33,17 @@ limit = warmup + 150
 
 ## Timeframe → Limit Reference
 
-Warmup for `extreme_direction_5m.pine` (period3=300, lookback=50 → warmup=350):
+Warmup for `extreme_direction_5m.pine` (period3=96, lookback=24 → warmup=120, tuned for 4h trade window):
 
-| Timeframe | Min limit (warmup only) | Limit for ~150 output bars | Real time covered |
+| Timeframe | Min limit (warmup only) | Limit for ~180 output bars | Real time covered |
 |---|---|---|---|
-| 1m  | 350 | 500 | ~8.3h |
-| 3m  | 350 | 500 | ~25h |
-| 5m  | 350 | 500 | ~41h |
-| 15m | 350 | 500 | ~5 days |
-| 1h  | 350 | 500 | ~20 days |
+| 1m  | 120 | 300 | ~5h |
+| 3m  | 120 | 300 | ~15h |
+| 5m  | 120 | 300 | ~25h |
+| **15m** | 120 | **300** | **~75h** |
+| 1h  | 120 | 300 | ~12 days |
+
+**Selected timeframe: 15m** (see pine_timeframe_selection.md for rationale)
 
 Warmup for `ema_golden_cross_15m.pine` (ema_slow=21 → warmup=21):
 

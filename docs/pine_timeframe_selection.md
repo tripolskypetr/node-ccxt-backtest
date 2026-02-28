@@ -125,9 +125,9 @@ function printFlipContext(label, trend, balance, close) {
 
 ---
 
-## Observed Results: extreme_direction_5m.pine (BTC/USDT, Sep 2025)
+## Observed Results: extreme_direction_5m.pine, old params (BTC/USDT, Sep 2025)
 
-limit=600, end=2025-09-24T12:00:00Z
+period1=100, period2=200, period3=300, lookback=50 → warmup=350. limit=600, end=2025-09-24T12:00:00Z
 
 | TF | Warmup | Flips | Span | Balance range | Balance at flips |
 |---|---|---|---|---|---|
@@ -136,22 +136,39 @@ limit=600, end=2025-09-24T12:00:00Z
 | **5m** | 117 | **3** | **40.2h** | [-23 .. +18] | **+4, -3, +3** |
 | 15m | 102 | 0 | 99.3h | [-27 .. 0] | — |
 
-**Selected: 5m**
+Selected: 5m (at the time). 15m was too slow — zero flips over 99h, permanently bearish.
+
+---
+
+## Observed Results: extreme_direction_5m.pine, 4h-tuned params (BTC/USDT, Feb 2024)
+
+period1=24 (2h), period2=48 (4h), period3=96 (8h), lookback=24 (2h) → warmup=120. limit=300, end=2024-02-02T20:00:00Z
+
+| TF | Warmup | Flips | Span | Balance range | Notes |
+|---|---|---|---|---|---|
+| 1m | 40 | 4 | 4.3h | [-19..+16] | 4 flips in 4h — too noisy, bal at flip = ±3 (threshold) |
+| 3m | 29 | 6 | 13.5h | [-16..+21] | 6 flips — noisy, 2 flips at bal=3 |
+| 5m | 63 | 7 | 19.7h | [-11..+11] | 7 flips in 20h — too noisy for 4h positions |
+| **15m** | 26 | **7** | **68.3h** | [-14..+18] | **1 flip per ~10h — good fit for 4h trade window** |
+
+**Selected: 15m**
 
 Reasoning:
-- `15m` — zero flips, permanently bearish in the window, useless for signal generation
-- `1m` — reacts fastest (~1 min after reversal) but high warmup cost in real time (350 bars = ~6h of history) and balance barely exceeds threshold at each flip
-- `3m` — similar flip count to 5m but requires more history for same output bars
-- `5m` — 3 flips over 40h, warmup only 117 bars (~10h of 5m data), balance range is clean, stable trend between flips
+- `1m/3m/5m` — all too noisy with short periods: multiple flips within a single 4h trade window
+- `15m` — 7 flips over 68h (avg 1 flip per 10h), trend stable within a 4h window
+- Balance at 15m flips: ±3-5, clearly above threshold
 
-Reaction delay comparison for the 2025-09-24 05:00 reversal:
+Trade-level verification (failed trades on 2024-02-02):
 
-| TF | Flip timestamp | Price at flip | Delay vs price bottom |
+| Moment | Trend | Balance | Verdict |
 |---|---|---|---|
-| 1m | 05:01 | 112,178 | ~1 min |
-| 5m | 06:00 | 112,644 | ~59 min, +466 pts |
+| Signal1 long @ 10:30 | +1 | -1 | Entered with balance=-1 → **neutral zone, should be blocked** |
+| Signal1 end @ 14:30 | -1 | -5 | Trend already flipped 1h before end |
+| Signal2 short @ 16:05 | -1 | 0 | **Balance=0 → neutral zone, should be blocked** |
+| Signal2 end @ 20:05 | +1 | +4 | Trend flipped, position reversed against short |
 
-1m reacts faster at the cost of more false signals in choppy periods. 5m sacrifices ~1h reaction time but gives cleaner sustained trends.
+Root cause: both failed trades entered when `|balance| < 4` — balance was at or below threshold.
+Fix: gate entries on `Math.abs(direction.balance) >= 4` in `outputNode`.
 
 ---
 

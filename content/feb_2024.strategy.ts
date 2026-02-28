@@ -51,11 +51,12 @@ const directionTimeframe = sourceNode(
         {
           symbol,
           timeframe: "5m",
-          limit: 600,
+          limit: 100,
         },
       );
       return extract(plots, {
         trend: "Trend",
+        balance: "Balance",
       });
     },
     { interval: "5m", key: ([symbol]) => symbol },

@@ -7,11 +7,14 @@ plotcandle(open, high, low, close,
      bordercolor=color.new(color.gray, 70))
 
 // === INPUTS ===
-period1 = input.int(100, "Period 1")
-period2 = input.int(200, "Period 2")
-period3 = input.int(300, "Period 3")
-countLookback = input.int(50, "Lookback")  // увеличил
-minBalanceForTrend = input.int(3, "Min Balance to Change Trend")  // порог
+// Trend filter for 4h trade window, sensitive to last 2h on 5m bars:
+// period1=6 (30min), period2=12 (1h), period3=24 (2h), lookback=12 (1h)
+// warmup = period3 + lookback = 36 bars
+period1 = input.int(6, "Period 1")
+period2 = input.int(12, "Period 2")
+period3 = input.int(24, "Period 3")
+countLookback = input.int(12, "Lookback")
+minBalanceForTrend = input.int(2, "Min Balance to Change Trend")
 
 // === EXTREMES DETECTION ===
 h100 = ta.highest(high, period1)

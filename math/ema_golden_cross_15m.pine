@@ -11,16 +11,17 @@ plotcandle(open, high, low, close,
 ema_fast_len = input.int(8, "EMA Fast", minval=1)
 ema_slow_len = input.int(21, "EMA Slow", minval=1)
 
-signal_valid_bars = input.int(5, "Signal Valid Bars", minval=1)
-min_gap = input.float(15.0, "Min EMA Gap Filter", minval=0.0)
+// signal lives for the full 4h trade window (4h / 15m = 16 bars)
+signal_valid_bars = input.int(16, "Signal Valid Bars", minval=1)
 
 ema_fast = ta.ema(close, ema_fast_len)
 ema_slow = ta.ema(close, ema_slow_len)
 ema_gap = ema_fast - ema_slow
 
 // === ENTRY CONDITIONS ===
-long_cond = ta.crossover(ema_fast, ema_slow) and math.abs(ema_gap) >= min_gap
-short_cond = ta.crossunder(ema_fast, ema_slow) and math.abs(ema_gap) >= min_gap
+// no gap filter — maximum sensitivity, trend filter handles noise
+long_cond = ta.crossover(ema_fast, ema_slow)
+short_cond = ta.crossunder(ema_fast, ema_slow)
 
 // === SIGNAL MANAGEMENT ===
 var int bars_since_signal = 0
