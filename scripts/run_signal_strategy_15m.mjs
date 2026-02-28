@@ -6,11 +6,18 @@ import ccxt from "ccxt";
 const SIGNAL_SCHEMA = {
   position: "Signal",
   priceOpen: "Close",
-  emaFast: "EmaFast",
-  emaSlow: "EmaSlow",
-  emaGap: "EmaGap",
-  barsSinceSignal: "BarsSinceSignal",
-  lastSignal: "LastSignal",
+  stopLoss: "StopLoss",
+  takeProfit: "TakeProfit",
+  estimatedTime: "EstimatedTime",
+  rsi: "d_RSI",
+  emaFast: "d_EmaFast",
+  emaSlow: "d_EmaSlow",
+  emaTrend: "d_EmaTrend",
+  volSpike: "d_VolSpike",
+  mom: "d_Mom",
+  trendUp: "d_TrendUp",
+  trendDown: "d_TrendDown",
+  barsSince: "d_BarsSince",
 };
 
 const SIGNAL_ID = randomString();
@@ -50,7 +57,7 @@ addExchangeSchema({
 });
 
 const plots = await run(
-  File.fromPath("ema_golden_cross_15m.pine", "./math"),
+  File.fromPath("signal_strategy_15m.pine", "./math"),
   {
     symbol: "BTCUSDT",
     timeframe: "15m",

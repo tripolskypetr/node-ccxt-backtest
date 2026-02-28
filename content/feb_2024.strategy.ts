@@ -66,7 +66,7 @@ const directionTimeframe = sourceNode(
 const goldenCrossTimeframe = sourceNode(
   Cache.fn(
     async (symbol) => {
-      const plots = await run(File.fromPath("ema_golden_cross_15m.pine", "../math"), {
+      const plots = await run(File.fromPath("signal_strategy_15m.pine", "../math"), {
         symbol,
         timeframe: "15m",
         limit: 100,
@@ -74,6 +74,9 @@ const goldenCrossTimeframe = sourceNode(
       return extract(plots, {
         position: "Signal",
         priceOpen: "Close",
+        priceStopLoss: "StopLoss",
+        priceTakeProfit: "TakeProfit",
+        minuteEstimatedTime: "EstimatedTime",
       });
     },
     { interval: "15m", key: ([symbol]) => symbol },
@@ -91,9 +94,9 @@ const strategySignal = outputNode(
     return {
       id: randomString(),
       position: isLong ? "long" : "short",
-      priceTakeProfit: isLong ? goldenCross.priceOpen * 1.01 : goldenCross.priceOpen * 0.99,
-      priceStopLoss: isLong ? goldenCross.priceOpen * 0.99 : goldenCross.priceOpen * 1.01,
-      minuteEstimatedTime: 240,
+      priceTakeProfit: goldenCross.priceTakeProfit,
+      priceStopLoss: goldenCross.priceStopLoss,
+      minuteEstimatedTime: goldenCross.minuteEstimatedTime,
     } as const;
   },
   directionTimeframe,
