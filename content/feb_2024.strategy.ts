@@ -1,13 +1,16 @@
 import { extract, run, File } from "@backtest-kit/pinets";
 import {
-    addExchangeSchema,
+  addExchangeSchema,
   addFrameSchema,
+  addRiskSchema,
   addStrategySchema,
   Cache,
+  getCandles,
 } from "backtest-kit";
 import { randomString, singleshot } from "functools-kit";
 import { sourceNode, outputNode, resolve } from "@backtest-kit/graph";
 import ccxt from "ccxt";
+import { predict, predictRange } from "garch";
 
 const getExchange = singleshot(async () => {
   const exchange = new ccxt.binance({
@@ -63,14 +66,17 @@ const directionTimeframe = sourceNode(
   ),
 );
 
-const goldenCrossTimeframe = sourceNode(
+const signalTimeframe = sourceNode(
   Cache.fn(
     async (symbol) => {
-      const plots = await run(File.fromPath("signal_strategy_15m.pine", "../math"), {
-        symbol,
-        timeframe: "15m",
-        limit: 100,
-      });
+      const plots = await run(
+        File.fromPath("signal_strategy_15m.pine", "../math"),
+        {
+          symbol,
+          timeframe: "15m",
+          limit: 100,
+        },
+      );
       return extract(plots, {
         position: "Signal",
         priceOpen: "Close",
@@ -83,24 +89,40 @@ const goldenCrossTimeframe = sourceNode(
   ),
 );
 
-const strategySignal = outputNode(
-  async ([direction, goldenCross]) => {
-    if (goldenCross.position === 0) return null;
-    if (direction.trend === -1 && goldenCross.position === 1) return null;
-    if (direction.trend === 1 && goldenCross.position === -1) return null;
+const volumeTimeframe = sourceNode(
+  Cache.fn(
+    async (symbol) => {
+        const candles = await getCandles(symbol, "15m", 1_000);
+        return predictRange(candles, '15m', 32);
+    },
+    { interval: "5m", key: ([symbol]) => symbol },
+  ),
+);
 
-    const isLong = goldenCross.position === 1;
+const strategySignal = outputNode(
+  async ([direction, signal, volume]) => {
+
+    if (volume.movePercent < 1) {
+        return null;
+    } 
+
+    if (signal.position === 0) return null;
+    if (direction.trend === -1 && signal.position === 1) return null;
+    if (direction.trend === 1 && signal.position === -1) return null;
+
+    const isLong = signal.position === 1;
 
     return {
       id: randomString(),
       position: isLong ? "long" : "short",
-      priceTakeProfit: goldenCross.priceTakeProfit,
-      priceStopLoss: goldenCross.priceStopLoss,
-      minuteEstimatedTime: goldenCross.minuteEstimatedTime,
+      priceTakeProfit: signal.priceTakeProfit,
+      priceStopLoss: signal.priceStopLoss,
+      minuteEstimatedTime: signal.minuteEstimatedTime,
     } as const;
   },
   directionTimeframe,
-  goldenCrossTimeframe,
+  signalTimeframe,
+  volumeTimeframe,
 );
 
 addFrameSchema({
@@ -111,8 +133,20 @@ addFrameSchema({
   note: "Bull run period",
 });
 
+addRiskSchema({
+  riskName: "feb_2024_risk",
+  validations: [
+    ({ currentSignal }) => {
+      if (currentSignal.position === "short") {
+        throw new Error("Short position is not allowed in for this month");
+      }
+    },
+  ],
+});
+
 addStrategySchema({
-  strategyName: "trailing_stop_strategy",
+  strategyName: "feb_2024_strategy",
   interval: "15m",
   getSignal: () => resolve(strategySignal),
+  riskList: ["feb_2024_risk"],
 });

@@ -58,8 +58,10 @@ else
 active_signal = bars_since_signal <= signal_valid_bars ? last_signal : 0
 
 // === HARDCODED SL/TP/TIME ===
+// TP=2% covers fees (0.4%) with margin. SL=1% asymmetric — gives room but caps loss.
+// EstimatedTime=480min (8h) based on avg time-to-close on signal bars (Feb 2024 data).
 sl = last_signal == 1 ? entry_price * 0.99 : last_signal == -1 ? entry_price * 1.01 : na
-tp = last_signal == 1 ? entry_price * 1.01 : last_signal == -1 ? entry_price * 0.99 : na
+tp = last_signal == 1 ? entry_price * 1.02 : last_signal == -1 ? entry_price * 0.98 : na
 
 // === VISUALIZATION ===
 line_color = active_signal == 1 ? color.green : active_signal == -1 ? color.red : color.gray
@@ -78,7 +80,7 @@ plot(close,         "Close",         display=display.data_window)
 plot(active_signal, "Signal",        display=display.data_window)
 plot(sl,            "StopLoss",      display=display.data_window)
 plot(tp,            "TakeProfit",    display=display.data_window)
-plot(240,           "EstimatedTime", display=display.data_window)
+plot(480,           "EstimatedTime", display=display.data_window)
 
 // === DEBUG ===
 plot(rsi,              "d_RSI",          display=display.data_window)
