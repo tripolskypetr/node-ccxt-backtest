@@ -6,6 +6,11 @@ import ccxt from "ccxt";
 const SIGNAL_SCHEMA = {
   position: "Signal",
   priceOpen: "Close",
+  emaFast: "EmaFast",
+  emaSlow: "EmaSlow",
+  emaGap: "EmaGap",
+  barsSinceSignal: "BarsSinceSignal",
+  lastSignal: "LastSignal",
 };
 
 const SIGNAL_ID = randomString();

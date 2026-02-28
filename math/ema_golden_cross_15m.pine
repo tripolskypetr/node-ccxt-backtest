@@ -12,13 +12,15 @@ ema_fast_len = input.int(8, "EMA Fast", minval=1)
 ema_slow_len = input.int(21, "EMA Slow", minval=1)
 
 signal_valid_bars = input.int(5, "Signal Valid Bars", minval=1)
+min_gap = input.float(15.0, "Min EMA Gap Filter", minval=0.0)
 
 ema_fast = ta.ema(close, ema_fast_len)
 ema_slow = ta.ema(close, ema_slow_len)
+ema_gap = ema_fast - ema_slow
 
 // === ENTRY CONDITIONS ===
-long_cond = ta.crossover(ema_fast, ema_slow)
-short_cond = ta.crossunder(ema_fast, ema_slow)
+long_cond = ta.crossover(ema_fast, ema_slow) and math.abs(ema_gap) >= min_gap
+short_cond = ta.crossunder(ema_fast, ema_slow) and math.abs(ema_gap) >= min_gap
 
 // === SIGNAL MANAGEMENT ===
 var int bars_since_signal = 0
@@ -52,3 +54,8 @@ plot(close, "Active Signal", color=line_color, linewidth=6)
 // === OUTPUTS FOR BOT ===
 plot(close, "Close", display=display.data_window)
 plot(active_signal, "Signal", display=display.data_window)
+plot(ema_fast, "EmaFast", display=display.data_window)
+plot(ema_slow, "EmaSlow", display=display.data_window)
+plot(ema_gap, "EmaGap", display=display.data_window)
+plot(bars_since_signal, "BarsSinceSignal", display=display.data_window)
+plot(last_signal, "LastSignal", display=display.data_window)
