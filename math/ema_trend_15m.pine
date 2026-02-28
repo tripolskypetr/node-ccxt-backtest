@@ -1,0 +1,24 @@
+//@version=5
+indicator("EMA Trend 15m", overlay=true)
+
+// === INPUTS ===
+ema_len    = input.int(50, "EMA Length",  minval=10)
+rsi_len    = input.int(14, "RSI Length",  minval=2)
+slope_bars = input.int(6,  "Slope Bars",  minval=1)
+// warmup = ema_len + slope_bars = 56 bars
+
+// === INDICATORS ===
+ema   = ta.ema(close, ema_len)
+rsi   = ta.rsi(close, rsi_len)
+slope = (ema - ema[slope_bars]) / ema[slope_bars] * 100
+
+// === VISUALIZATION ===
+plot(ema, "EMA", color=color.new(color.white, 50), linewidth=2)
+
+// === OUTPUTS FOR BOT ===
+plot(slope, "EmaSlope", display=display.data_window)
+plot(rsi,   "Rsi",      display=display.data_window)
+plot(close, "Close",    display=display.data_window)
+
+// === DEBUG ===
+plot(ema,   "d_Ema",    display=display.data_window)

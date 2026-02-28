@@ -4,13 +4,10 @@ import { run, File, toMarkdown } from "@backtest-kit/pinets";
 import ccxt from "ccxt";
 
 const SIGNAL_SCHEMA = {
-  trend: "Trend",
-  balance: "Balance",
-  close: "Close",
-  totalHighs: "TotalHighs",
-  totalLows: "TotalLows",
-  isHigh: "IsHigh",
-  isLow: "IsLow",
+  emaSlope: "EmaSlope",
+  rsi:      "Rsi",
+  close:    "Close",
+  ema:      "d_Ema",
 };
 
 const SIGNAL_ID = randomString();
@@ -50,14 +47,14 @@ addExchangeSchema({
 });
 
 const plots = await run(
-  File.fromPath("extreme_direction_5m.pine", "./math"),
+  File.fromPath("ema_trend_15m.pine", "./math"),
   {
     symbol: "BTCUSDT",
-    timeframe: "5m",
-    limit: 600,
+    timeframe: "15m",
+    limit: 200,
   },
   "ccxt-exchange",
-  new Date("2025-09-24T12:00:00.000Z"),
+  new Date("2024-02-15T12:00:00.000Z"),
 );
 
 console.log(await toMarkdown(SIGNAL_ID, plots, SIGNAL_SCHEMA));

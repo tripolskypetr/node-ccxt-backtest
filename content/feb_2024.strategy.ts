@@ -6,11 +6,12 @@ import {
   addStrategySchema,
   Cache,
   getCandles,
+  getDate,
 } from "backtest-kit";
 import { randomString, singleshot } from "functools-kit";
 import { sourceNode, outputNode, resolve } from "@backtest-kit/graph";
 import ccxt from "ccxt";
-import { predict, predictRange } from "garch";
+import { predictRange } from "garch";
 
 const getExchange = singleshot(async () => {
   const exchange = new ccxt.binance({
@@ -46,84 +47,99 @@ addExchangeSchema({
   },
 });
 
-const directionTimeframe = sourceNode(
-  Cache.fn(
-    async (symbol) => {
-      const plots = await run(
-        File.fromPath("extreme_direction_5m.pine", "../math"),
-        {
-          symbol,
-          timeframe: "5m",
-          limit: 100,
-        },
-      );
-      return extract(plots, {
-        trend: "Trend",
-        balance: "Balance",
-      });
-    },
-    { interval: "5m", key: ([symbol]) => symbol },
-  ),
-);
+// --- SOURCE NODES ---
 
-const signalTimeframe = sourceNode(
+const emaTrendNode = sourceNode(
   Cache.fn(
     async (symbol) => {
       const plots = await run(
-        File.fromPath("signal_strategy_15m.pine", "../math"),
+        File.fromPath("ema_trend_15m.pine", "../math"),
         {
           symbol,
           timeframe: "15m",
-          limit: 100,
+          limit: 200,
         },
       );
       return extract(plots, {
-        position: "Signal",
-        priceOpen: "Close",
-        priceStopLoss: "StopLoss",
-        priceTakeProfit: "TakeProfit",
-        minuteEstimatedTime: "EstimatedTime",
+        emaSlope: "EmaSlope",
+        rsi: "Rsi",
+        close: "Close",
       });
     },
     { interval: "15m", key: ([symbol]) => symbol },
   ),
 );
 
-const volumeTimeframe = sourceNode(
+// GARCH forecast over 32 bars = 8h = minuteEstimatedTime
+const GARCH_STEPS = 32;
+
+const garchNode = sourceNode(
   Cache.fn(
     async (symbol) => {
-        const candles = await getCandles(symbol, "15m", 1_000);
-        return predictRange(candles, '15m', 32);
+      const candles = await getCandles(symbol, "15m", 1_000);
+      return predictRange(candles, "15m", GARCH_STEPS, 0.95);
     },
-    { interval: "5m", key: ([symbol]) => symbol },
+    { interval: "15m", key: ([symbol]) => symbol },
   ),
 );
 
+// --- OUTPUT NODE ---
+
 const strategySignal = outputNode(
-  async ([direction, signal, volume]) => {
+  async ([ema, garch]) => {
 
-    if (volume.movePercent < 1) {
+    const date = await getDate();
+
+    // GARCH gate: skip unreliable model fits and low-volatility periods
+    if (!garch.reliable) {
+        console.log("Not reiable", date)
         return null;
-    } 
+    }
+    if (garch.movePercent < 0.8) {
+        console.log("Flat market", garch.movePercent, date)
+        return null;
+    }
 
-    if (signal.position === 0) return null;
-    if (direction.trend === -1 && signal.position === 1) return null;
-    if (direction.trend === 1 && signal.position === -1) return null;
+    // EMA slope threshold: 0.05% change over 6 bars (90 min) = trend active
+    const isBull = ema.emaSlope > 0.05;
+    const isBear = ema.emaSlope < -0.05;
 
-    const isLong = signal.position === 1;
+    // RSI pullback entry: enter when momentum temporarily exhausted within trend
+    const longEntry  = isBull && ema.rsi < 40;
+    const shortEntry = isBear && ema.rsi > 60;
+
+
+    if (!longEntry && !shortEntry) {
+        console.log("RSI not in range", "rsi:", ema.rsi, "slope:", ema.emaSlope, date)
+        return null;
+    }
+
+    const isLong = longEntry;
+    const price = ema.close;
+
+    // Dynamic TP/SL from GARCH log-normal bands (no magic constants)
+    const rawTP = isLong ? garch.upperPrice : garch.lowerPrice;
+    const rawSL = isLong ? garch.lowerPrice : garch.upperPrice;
+
+    // Enforce minimum 2:1 R:R — SL never worse than 0.75%
+    const tp = rawTP;
+    const sl = isLong
+      ? Math.max(rawSL, price * 0.9925)
+      : Math.min(rawSL, price * 1.0075);
 
     return {
       id: randomString(),
       position: isLong ? "long" : "short",
-      priceTakeProfit: signal.priceTakeProfit,
-      priceStopLoss: signal.priceStopLoss,
-      minuteEstimatedTime: signal.minuteEstimatedTime,
+      priceTakeProfit: tp,
+      priceStopLoss: sl,
+      minuteEstimatedTime: GARCH_STEPS * 15,
     } as const;
   },
-  directionTimeframe,
-  signalTimeframe,
-  volumeTimeframe,
+  emaTrendNode,
+  garchNode,
 );
+
+// --- REGISTRATION ---
 
 addFrameSchema({
   frameName: "feb_2024_frame",
@@ -138,7 +154,7 @@ addRiskSchema({
   validations: [
     ({ currentSignal }) => {
       if (currentSignal.position === "short") {
-        throw new Error("Short position is not allowed in for this month");
+        throw new Error("Short position is not allowed for this month");
       }
     },
   ],
