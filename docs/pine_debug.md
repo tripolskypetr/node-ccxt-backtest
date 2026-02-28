@@ -186,7 +186,7 @@ console.log(await toMarkdown(SIGNAL_ID, plots, SIGNAL_SCHEMA));
 Notes:
 - `File.fromPath(filename, dir)` — `filename` is relative to `dir`, not cwd
 - `sinceDate` is the **end** of the requested range; the interpreter fetches `limit` candles backward from it
-- `exchangeName` must match the string passed to `addExchangeSchema`
+- `exchangeName` is required here because `scripts/run_*.mjs` runs standalone via `node` — there is no CLI context to inject it automatically. In `content/*.strategy.ts` files run by the backtest-kit CLI, the exchange is resolved from context and `exchangeName` should be omitted from `run()`
 - `SIGNAL_SCHEMA` keys become markdown table column headers; values are Pine plot names (case-sensitive)
 
 ---
