@@ -39,6 +39,7 @@ const SEARCH_PROMPT = str.newline(
 addAdvisor({
   advisorName: AdvisorName.AssetCashflowAdvisor,
   getChat: async ({ date, query }: AdvisorRequestContract) => {
+    console.log("AssetCashflowAdvisor called with query:", query, "and date:", date);
     return await fork(
       async (clientId, agentName) => {
         await commitUserMessage(
