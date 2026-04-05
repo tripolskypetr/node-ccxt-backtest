@@ -272,9 +272,10 @@ addOutline<ResearchResponseContract>({
     },
     required: ["signal", "reasoning"],
   },
-  getOutlineHistory: async ({ history }, symbol: string, when: Date) => {
+  getOutlineHistory: async ({ resultId, history }, symbol: string, when: Date) => {
     const displayName = Reflect.get(DISPLAY_NAME_MAP, symbol) || symbol;
     const contract: AdvisorRequestContract = {
+      resultId,
       date: when,
       query: displayName,
     };

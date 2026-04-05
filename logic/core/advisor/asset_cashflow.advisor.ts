@@ -38,13 +38,13 @@ const SEARCH_PROMPT = str.newline(
 
 addAdvisor({
   advisorName: AdvisorName.AssetCashflowAdvisor,
-  getChat: async ({ date, query }: AdvisorRequestContract) => {
-    console.log("AssetCashflowAdvisor called with query:", query, "and date:", date);
+  getChat: async ({ resultId, date, query }: AdvisorRequestContract) => {
+    console.log(`AssetCashflowAdvisor called with query: ${query}, date: ${date}, resultId: ${resultId}`);
     return await fork(
       async (clientId, agentName) => {
         await commitUserMessage(
           str.newline(
-            "Прочитай что именно мне нужно найти и скажи ОК",
+            "Прочитай что именно мне нужно найти и скажи ОK",
             "",
             SEARCH_PROMPT,
           ),
@@ -64,7 +64,7 @@ addAdvisor({
         return await execute(request, clientId, agentName);
       },
       {
-        clientId: randomString(),
+        clientId: `${resultId}_asset-cashflow`,
         swarmName: SwarmName.WebSearchSwarm,
         onError: (error) => console.error("Error in AssetCashflowAdvisor:", error),
       },
