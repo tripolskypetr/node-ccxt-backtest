@@ -329,12 +329,12 @@ addOutline<ResearchResponseContract>({
   ],
   callbacks: {
     async onValidDocument(result: IOutlineResult<ResearchResponseContract>) {
-      /*if (!result.data) {
+      if (!result.data) {
         return;
       }
       if (result.data.signal === "WAIT") {
         return;
-      }*/
+      }
       await dumpOutlineResult(result, "./dump/outline/research");
     },
   },

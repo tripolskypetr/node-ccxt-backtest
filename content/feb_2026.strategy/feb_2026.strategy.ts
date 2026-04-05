@@ -1,6 +1,4 @@
 import {
-  addExchangeSchema,
-  addFrameSchema,
   addStrategySchema,
   listenError,
   Cache,
@@ -9,101 +7,54 @@ import {
 import {
   errorData,
   getErrorMessage,
-  randomString,
-  singleshot,
 } from "functools-kit";
-import ccxt from "ccxt";
-import { run, File, extract } from "@backtest-kit/pinets";
-import { outputNode, resolve, sourceNode } from "@backtest-kit/graph";
+import { position, research } from "../../logic";
+import { ResearchResponseContract } from "../../logic/contract/ResearchResponse.contract";
 
-const getExchange = singleshot(async () => {
-  const exchange = new ccxt.binance({
-    options: {
-      defaultType: "spot",
-      adjustForTimeDifference: true,
-      recvWindow: 60000,
-    },
-    enableRateLimit: true,
-  });
-  await exchange.loadMarkets();
-  return exchange;
-});
-
-const pineSource = sourceNode(
-  Cache.fn(
-    async (symbol) => {
-      const plots = await run(File.fromPath("feb_2026.pine", "../math"), {
-        symbol,
-        timeframe: "15m",
-        limit: 2688,
-      });
-
-      return await extract(plots, {
-        position: "Position",
-        entryPrice: "EntryPrice",
-        tp: "TP",
-        sl: "SL",
-      });
-    },
-    { interval: "15m", key: ([symbol]) => symbol },
-  ),
+const researchSource = Cache.fn(
+  async (symbol: string, when: Date) => {
+    return await research(symbol, when);
+  },
+  { interval: "1d", key: ([symbol]) => symbol },
 );
 
-const signalOutput = outputNode(async ([pineSource]) => {
-  const position =
-    pineSource.position === -1
-      ? "short"
-      : pineSource.position === 1
-        ? "long"
-        : "wait";
-
-  if (position === "wait") {
-    return null;
-  }
-
-  return {
-    id: randomString(),
-    position,
-    priceOpen: pineSource.entryPrice,
-    priceTakeProfit: pineSource.tp,
-    priceStopLoss: pineSource.sl,
-    minuteEstimatedTime: Infinity,
-  } as const;
-}, pineSource);
-
-addExchangeSchema({
-  exchangeName: "ccxt-exchange",
-  getCandles: async (symbol, interval, since, limit) => {
-    const exchange = await getExchange();
-    const candles = await exchange.fetchOHLCV(
-      symbol,
-      interval,
-      since.getTime(),
-      limit,
-    );
-    return candles.map(([timestamp, open, high, low, close, volume]) => ({
-      timestamp,
-      open,
-      high,
-      low,
-      close,
-      volume,
-    }));
+const positionSource = Cache.fn(
+  async (symbol: string, when: Date, research: ResearchResponseContract, ) => {
+    return await position(research, symbol, when);
   },
-});
-
-addFrameSchema({
-  frameName: "feb_2026_frame",
-  interval: "1m",
-  startDate: new Date("2026-02-01T00:00:00Z"),
-  endDate: new Date("2026-02-28T23:59:59Z"),
-  note: "February 2026",
-});
+  { interval: "1h", key: ([symbol]) => symbol },
+);
 
 addStrategySchema({
   strategyName: "feb_2026_strategy",
   interval: "1m",
-  getSignal: async () => await resolve(signalOutput),
+  getSignal: async (symbol, when) => {
+    const research = await researchSource(symbol, when);
+
+    if (research.signal === "WAIT") {
+      return null;
+    }
+
+    const position = await positionSource(symbol, when, research);
+
+    if (position.action === "WAIT") {
+      return null;
+    }
+
+    const signalMap = {
+      BUY: "long",
+      SELL: "short"
+    } as const;
+
+    return {
+      id: position.id,
+      position: signalMap[research.signal],
+      priceTakeProfit: position.take_profit_price,
+      priceStopLoss: position.stop_loss_price,
+      minuteEstimatedTime: Infinity,
+      note: position.reasoning,
+    }
+  },
 });
 
 listenError((error) => {

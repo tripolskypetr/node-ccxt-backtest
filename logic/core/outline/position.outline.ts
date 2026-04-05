@@ -191,7 +191,17 @@ addOutline<PositionResponseContract>({
     },
   ],
   callbacks: {
-    async onValidDocument(result: IOutlineResult<ResearchResponseContract>) {
+    async onValidDocument(result: IOutlineResult<PositionResponseContract>) {
+      /*if (!result.data) {
+        return;
+      }
+      if (result.data.action === "WAIT") {
+        return;
+      }*/
+      {
+        const [{ id: resultId }] = result.params;
+        Object.assign(result, { resultId });
+      }
       await dumpOutlineResult(result, "./dump/outline/position");
     },
   },
