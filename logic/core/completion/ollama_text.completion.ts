@@ -50,4 +50,5 @@ addCompletion({
 
     return result;
   },
+  flags: ["Всегда пиши ответ на русском языке", "Reasoning: high"],
 });

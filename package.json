@@ -19,6 +19,7 @@
     "backtest-kit": "6.5.0",
     "dayjs": "1.11.20",
     "functools-kit": "1.0.95",
+    "jsonrepair": "3.12.0",
     "garch": "1.2.3",
     "get-moment-stamp": "1.1.2",
     "ollama": "0.6.3",

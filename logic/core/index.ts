@@ -1,4 +1,6 @@
 import "./completion/ollama_text.completion";
+import "./completion/ollama_outline_tool.completion";
+import "./completion/ollama_outline_format.completion";
 
 import "./advisor/asset_balance_sheet.advisor";
 import "./advisor/asset_cashflow.advisor";
