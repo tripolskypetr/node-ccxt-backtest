@@ -61,6 +61,8 @@ addCompletion({
           content: json,
         };
 
+        message.thinking && Reflect.set(result, "_thinking", message.thinking);
+
         return result;
       } finally {
         attempt++;

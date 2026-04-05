@@ -107,6 +107,8 @@ addCompletion({
             content: JSON.stringify(validation.data),
           };
 
+          response.message.thinking && Reflect.set(result, "_thinking", response.message.thinking);
+
           return result;
         }
       }
