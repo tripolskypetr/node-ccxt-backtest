@@ -5,22 +5,19 @@ import {
   Log,
   getAveragePrice,
 } from "backtest-kit";
-import {
-  errorData,
-  getErrorMessage,
-} from "functools-kit";
+import { errorData, getErrorMessage } from "functools-kit";
 import { position, research } from "../../logic";
 import { ResearchResponseContract } from "../../logic/contract/ResearchResponse.contract";
 
-const researchSource = Cache.fn(
+const researchSource = Cache.file(
   async (symbol: string, when: Date) => {
     return await research(symbol, when);
   },
-  { interval: "1d", key: ([symbol]) => symbol },
+  { interval: "1d", name: "research_source" },
 );
 
 const positionSource = Cache.fn(
-  async (symbol: string, when: Date, research: ResearchResponseContract, ) => {
+  async (symbol: string, when: Date, research: ResearchResponseContract) => {
     return await position(research, symbol, when);
   },
   { interval: "1h", key: ([symbol]) => symbol },
@@ -44,7 +41,7 @@ addStrategySchema({
 
     const signalMap = {
       BUY: "long",
-      SELL: "short"
+      SELL: "short",
     } as const;
 
     const open = await getAveragePrice(symbol);
@@ -60,7 +57,7 @@ addStrategySchema({
       priceStopLoss,
       minuteEstimatedTime: Infinity,
       note: position.reasoning,
-    }
+    };
   },
 });
 
