@@ -72,7 +72,7 @@ addAdvisor({
       {
         clientId: `${resultId}_global-news`,
         swarmName: SwarmName.WebSearchSwarm,
-        onError: (error) => console.error("Error in GlobalNewsAdvisor:", error),
+        onError: (error) => console.error(`Error in GlobalNewsAdvisor for resultId ${resultId}:`, error),
       },
     );
   },

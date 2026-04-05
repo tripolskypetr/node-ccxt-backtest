@@ -64,7 +64,7 @@ addAdvisor({
       {
         clientId: `${resultId}_asset-income-statement`,
         swarmName: SwarmName.WebSearchSwarm,
-        onError: (error) => console.error("Error in AssetIncomeStatementAdvisor:", error),
+        onError: (error) => console.error(`Error in AssetIncomeStatementAdvisor for resultId ${resultId}:`, error),
       },
     );
   },

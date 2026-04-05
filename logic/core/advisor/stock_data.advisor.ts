@@ -61,7 +61,7 @@ addAdvisor({
       {
         clientId: `${resultId}_stock-data`,
         swarmName: SwarmName.WebSearchSwarm,
-        onError: (error) => console.error("Error in StockDataAdvisor:", error),
+        onError: (error) => console.error(`Error in StockDataAdvisor for resultId ${resultId}:`, error),
       },
     );
   },

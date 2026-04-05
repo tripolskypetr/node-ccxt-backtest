@@ -62,7 +62,7 @@ addAdvisor({
       {
         clientId: `${resultId}_asset-balance-sheet`,
         swarmName: SwarmName.WebSearchSwarm,
-        onError: (error) => console.error("Error in AssetBalanceSheetAdvisor:", error),
+        onError: (error) => console.error(`Error in AssetBalanceSheetAdvisor for resultId ${resultId}:`, error),
       },
     );
   },
