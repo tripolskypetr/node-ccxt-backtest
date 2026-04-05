@@ -192,7 +192,7 @@ addOutline<PositionResponseContract>({
   ],
   callbacks: {
     async onValidDocument(result: IOutlineResult<ResearchResponseContract>) {
-      await dumpOutlineResult(result, "./dump/position");
+      await dumpOutlineResult(result, "./dump/outline/position");
     },
   },
 });

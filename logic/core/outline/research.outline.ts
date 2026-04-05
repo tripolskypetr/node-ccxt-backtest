@@ -335,7 +335,7 @@ addOutline<ResearchResponseContract>({
       if (result.data.signal === "WAIT") {
         return;
       }*/
-      await dumpOutlineResult(result, "./dump/research");
+      await dumpOutlineResult(result, "./dump/outline/research");
     },
   },
 });
