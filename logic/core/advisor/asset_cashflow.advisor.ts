@@ -66,7 +66,7 @@ addAdvisor({
       {
         clientId: `${resultId}_asset-cashflow`,
         swarmName: SwarmName.WebSearchSwarm,
-        onError: (error) => console.error(`Error in AssetCashflowAdvisor for resultId ${resultId}:`, error),
+        onError: (error) => console.error(`Error in AssetCashflowAdvisor for query ${query}, date ${date}, resultId ${resultId}:`, error),
       },
     );
   },

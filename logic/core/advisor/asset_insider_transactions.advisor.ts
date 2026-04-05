@@ -67,7 +67,7 @@ addAdvisor({
       {
         clientId: `${resultId}_asset-insider-transactions`,
         swarmName: SwarmName.WebSearchSwarm,
-        onError: (error) => console.error(`Error in AssetInsiderTransactionsAdvisor for resultId ${resultId}:`, error),
+        onError: (error) => console.error(`Error in AssetInsiderTransactionsAdvisor for query ${query}, date ${date}, resultId ${resultId}:`, error),
       },
     );
   },

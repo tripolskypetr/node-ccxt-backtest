@@ -68,7 +68,7 @@ addAdvisor({
       {
         clientId: `${resultId}_asset-news`,
         swarmName: SwarmName.WebSearchSwarm,
-        onError: (error) => console.error(`Error in AssetNewsAdvisor for resultId ${resultId}:`, error),
+        onError: (error) => console.error(`Error in AssetNewsAdvisor for query ${query}, date ${date}, resultId ${resultId}:`, error),
       },
     );
   },
