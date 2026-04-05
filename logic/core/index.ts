@@ -18,3 +18,4 @@ import "./agent/web_search.agent";
 import "./swarm/web_search.swarm";
 
 import "./outline/research.outline";
+import "./outline/position.outline";
