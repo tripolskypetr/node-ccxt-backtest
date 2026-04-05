@@ -63,6 +63,7 @@ addAdvisor({
       {
         clientId: randomString(),
         swarmName: SwarmName.WebSearchSwarm,
+        onError: (error) => console.error("Error in AssetIncomeStatementAdvisor:", error),
       },
     );
   },
