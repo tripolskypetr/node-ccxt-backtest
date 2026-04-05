@@ -42,22 +42,9 @@ const POSITION_PROMPT = str.newline(
   " - **OPEN**: Входить сейчас. Текущая цена — разумная точка входа с учётом технической картины.",
   " - **WAIT**: Не входить. Цена неудобная, импульс слабый или стакан не поддерживает вход.",
   "",
-  "**Параметры риска (минимальные значения):**",
-  " - Risk/Reward: минимум 1:2",
-  " - Stop-Loss: не более 2% от цены входа",
-  " - Take-Profit: не менее 1% от цены входа",
-  " - Для LONG:  SL ≤ open_price × 0.98,  TP ≥ open_price × 1.01",
-  " - Для SHORT: SL ≤ open_price × 1.02,  TP ≥ open_price × 0.99",
-  " - Можно ставить лучше (уже стоп, дальше тейк) если техническая картина позволяет.",
-  "",
   "**Требуемый результат:**",
   "1. **action**: OPEN или WAIT.",
-  "2. **open_price**: цена входа (текущая рыночная цена по стакану).",
-  "3. **stop_loss_price**: рассчитать по формуле выше.",
-  "4. **take_profit_price**: рассчитать по формуле выше.",
-  "5. **reasoning**: кратко объясни почему именно сейчас входить (или почему WAIT).",
-  "",
-  "При action=WAIT укажи open_price как текущую цену по стакану, stop_loss_price и take_profit_price выставь в 0.",
+  "2. **reasoning**: кратко объясни почему именно сейчас входить (или почему WAIT).",
 );
 
 const commitFundamentalResearch = async (
@@ -91,24 +78,12 @@ addOutline<PositionResponseContract>({
         description: "Решение о входе: OPEN — войти сейчас, WAIT — ждать лучшей точки.",
         enum: ["OPEN", "WAIT"],
       },
-      open_price: {
-        type: "number",
-        description: "Цена входа в позицию (текущая рыночная цена по стакану).",
-      },
-      stop_loss_price: {
-        type: "number",
-        description: "Уровень стоп-лосса. При action=WAIT указать 0.",
-      },
-      take_profit_price: {
-        type: "number",
-        description: "Уровень тейк-профита. При action=WAIT указать 0.",
-      },
       reasoning: {
         type: "string",
-        description: "Обоснование точки входа, стопа и тейка на основе технического анализа.",
+        description: "Обоснование решения о входе на основе технического анализа.",
       },
     },
-    required: ["action", "open_price", "stop_loss_price", "take_profit_price", "reasoning"],
+    required: ["action", "reasoning"],
   },
   getOutlineHistory: async (
     { history },
@@ -165,42 +140,14 @@ addOutline<PositionResponseContract>({
       },
       docDescription: "Проверяет, что action содержит допустимое значение.",
     },
-    {
-      validate: ({ data }) => {
-        if (!data.open_price || data.open_price <= 0) {
-          throw new Error("Поле open_price должно содержать положительную цену");
-        }
-      },
-      docDescription: "Проверяет, что цена входа указана и положительна.",
-    },
-    {
-      validate: ({ data }) => {
-        if (data.action === "OPEN" && (!data.stop_loss_price || data.stop_loss_price <= 0)) {
-          throw new Error("При action=OPEN поле stop_loss_price обязательно и должно быть положительным");
-        }
-      },
-      docDescription: "Проверяет, что стоп-лосс указан при открытии позиции.",
-    },
-    {
-      validate: ({ data }) => {
-        if (data.action === "OPEN" && (!data.take_profit_price || data.take_profit_price <= 0)) {
-          throw new Error("При action=OPEN поле take_profit_price обязательно и должно быть положительным");
-        }
-      },
-      docDescription: "Проверяет, что тейк-профит указан при открытии позиции.",
-    },
   ],
   callbacks: {
     async onValidDocument(result: IOutlineResult<PositionResponseContract>) {
-      /*if (!result.data) {
+      if (!result.data) {
         return;
       }
       if (result.data.action === "WAIT") {
         return;
-      }*/
-      {
-        const [{ id: resultId }] = result.params;
-        Object.assign(result, { resultId });
       }
       await dumpOutlineResult(result, "./dump/outline/position");
     },

@@ -3,6 +3,7 @@ import {
   listenError,
   Cache,
   Log,
+  getAveragePrice,
 } from "backtest-kit";
 import {
   errorData,
@@ -46,11 +47,17 @@ addStrategySchema({
       SELL: "short"
     } as const;
 
+    const open = await getAveragePrice(symbol);
+    const isLong = research.signal === "BUY";
+
+    const priceTakeProfit = isLong ? open * 1.01 : open * 0.99;
+    const priceStopLoss = isLong ? open * 0.98 : open * 1.02;
+
     return {
       id: position.id,
       position: signalMap[research.signal],
-      priceTakeProfit: position.take_profit_price,
-      priceStopLoss: position.stop_loss_price,
+      priceTakeProfit,
+      priceStopLoss,
       minuteEstimatedTime: Infinity,
       note: position.reasoning,
     }
