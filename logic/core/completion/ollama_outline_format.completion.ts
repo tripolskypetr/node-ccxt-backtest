@@ -2,6 +2,7 @@ import {
   addCompletion,
   IOutlineCompletionArgs,
   IOutlineMessage,
+  validateToolArguments,
 } from "agent-swarm-kit";
 import { CompletionName } from "../../enum/CompletionName";
 import { Message } from "ollama";
@@ -47,7 +48,13 @@ addCompletion({
 
         const json = jsonrepair(message.content);
 
-        JSON.parse(json);
+        const parsedArguments = JSON.parse(json);
+
+        const validation = validateToolArguments(parsedArguments, schema);
+
+        if (!validation.success) {
+          throw new Error(`Attempt ${attempt + 1}: ${validation.error}`);
+        }
 
         const result: IOutlineMessage = {
           role: "assistant",
