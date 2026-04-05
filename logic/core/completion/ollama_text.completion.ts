@@ -48,6 +48,8 @@ addCompletion({
       role: response.message.role as ISwarmMessage["role"],
     };
 
+    response.message.thinking && Reflect.set(result, "_thinking", response.message.thinking);
+
     return result;
   },
   flags: ["Всегда пиши ответ на русском языке", "Reasoning: high"],
