@@ -19,3 +19,4 @@ import "./swarm/web_search.swarm";
 
 import "./outline/research.outline";
 import "./outline/position.outline";
+import "./outline/signal.outline";
