@@ -67,7 +67,7 @@ const research = {
 
 await runInMockContext(
   async () => {
-    await position(research, "BTCUSDT", when);
+    console.log(await position(research, "BTCUSDT", when));
   },
   {
     when,
