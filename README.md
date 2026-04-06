@@ -40,7 +40,7 @@ The 8 analysts are modelled after the standard sections of a company's financial
 
 This framing is deliberate: it forces the LLM to cover the market from 8 distinct angles that professional fund analysts would use, with no overlap between them.
 
-## 🧠 Anti-Bias Measures in the Agent Prompts
+## 🔒 Anti-Bias Measures in the Agent Prompts
 
 Getting an LLM to do honest research — not optimistic summaries — required explicit instructions baked into every agent's system prompt:
 
