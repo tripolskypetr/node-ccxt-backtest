@@ -1,207 +1,143 @@
-# 🧿 Backtest Kit Project
+# 🧿 AI Fundamental Analysis via ReAct Agent Swarm
 
-> A TypeScript framework for backtesting and live trading strategies on multi-asset, crypto, forex or [DEX (peer-to-peer marketplace)](https://en.wikipedia.org/wiki/Decentralized_finance#Decentralized_exchanges), spot, futures with crash-safe persistence, signal validation, and AI optimization.
+> A trading strategy built on the ReAct (Reason + Act) pattern: a swarm of LLM agents independently researches the market using iterative web search, then a portfolio manager LLM synthesises all findings into a single directional signal. No hardcoded indicators. No rule-based logic. Every decision is a reasoned conclusion.
 
-![screenshot](https://raw.githubusercontent.com/tripolskypetr/backtest-kit/HEAD/assets/screenshots/screenshot16.png)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/tripolskypetr/node-ccxt-backtest)
 
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/tripolskypetr/backtest-kit)
-[![npm](https://img.shields.io/npm/v/backtest-kit.svg?style=flat-square)](https://npmjs.org/package/backtest-kit)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue)]()
-[![Build](https://github.com/tripolskypetr/backtest-kit/actions/workflows/webpack.yml/badge.svg)](https://github.com/tripolskypetr/backtest-kit/actions/workflows/webpack.yml)
+## 💡 The Core Idea
 
-A minimal project scaffold for [backtest-kit](https://github.com/tripolskypetr/backtest-kit). All infrastructure (exchange registration, candle caching, runner, UI, Telegram) is handled by `@backtest-kit/cli` — this project contains only your strategy files.
+Traditional algorithmic trading uses fixed rules: _"if RSI < 30 and price crosses MA — buy"_. This project replaces the rules with reasoning.
 
-## 📋 Quick Start
+The LLM is not asked _"what is the RSI?"_ — it is asked _"should I buy Bitcoin today, and why?"_ It then goes and finds out.
 
-```bash
-npm start         # Run the CLI (append flags below)
-npm run sync:lib  # Refresh library docs in docs/lib/
+The architecture is a direct implementation of the **ReAct pattern**:
+
+```
+while (no_answer) {
+  Reason: "What do I need to know to answer this?"
+  Act:    web_search(query)
+  Observe: read the results
+}
+Answer: synthesise everything into a structured conclusion
 ```
 
-## 🏃 Running Modes
+Each of the 8 specialist agents runs its own ReAct loop in an isolated conversation session (`keepMessages: Infinity`). They do not share context — they work independently and in parallel, then hand their reports to a synthesiser.
 
-All modes are invoked via `npm start -- <flags> <entry-point>`.
+## 🕵️ Equity Analysis Framework Applied to Crypto
 
-### 🧪 Backtest
+The 8 analysts are modelled after the standard sections of a company's financial due diligence — applied to Bitcoin's on-chain equivalents:
 
-Runs the strategy against historical candle data defined by a `FrameSchema`.
+| Financial Concept | Crypto Equivalent | What the Agent Searches |
+|---|---|---|
+| **Balance Sheet** | On-chain reserves | Exchange outflows, LTH supply, illiquid supply ratio, HODL waves |
+| **Cash Flow Statement** | Capital flows | ETF net inflows, miner selling pressure, stablecoin exchange inflows, OTC volume |
+| **Fundamentals / Valuation** | Network health | Hash rate, MVRV ratio, NVT ratio, stock-to-flow model |
+| **Income Statement** | Network revenue | Transaction fees, Lightning capacity, Ordinals activity, DeFi TVL |
+| **Insider Transactions** | Smart money | MicroStrategy buys, BlackRock ETF holdings, Grayscale GBTC, government wallets |
+| **Asset News** | Market sentiment | Regulatory events, exchange hacks, institutional adoption |
+| **Global Macro** | Macro environment | Fed rate decisions, CPI surprises, DXY, fear & greed index, M2 money supply |
+| **Price History** | Technical context | OHLCV history, volume spikes, breakout confirmation |
 
-```bash
-npm start -- --backtest --symbol BTCUSDT --strategy feb_2026_strategy --exchange ccxt-exchange --frame feb_2026_frame ./content/feb_2026.strategy.ts
+This framing is deliberate: it forces the LLM to cover the market from 8 distinct angles that professional fund analysts would use, with no overlap between them.
+
+## 🧠 Anti-Bias Measures in the Agent Prompts
+
+Getting an LLM to do honest research — not optimistic summaries — required explicit instructions baked into every agent's system prompt:
+
+- **No look-ahead bias** — the agent is given a specific `date` and told: _"only use sources you can confirm were published before this date"_
+- **Reject undated sources** — _"if you cannot determine the publication date from the document, do not use it"_
+- **No marketing** — _"bias toward negative signals; ignore bullish framing in the source material"_
+- **Multiple queries required** — _"make several searches; do not base the report on a single article"_
+- **No hallucination** — _"write only what you actually found; do not invent figures"_
+
+## 🧠 Portfolio Manager: Synthesis, Not Voting
+
+A naive approach would count how many of the 8 reports are bullish vs bearish and take the majority. This project does not do that.
+
+The synthesising `ResearchOutline` sends all 8 reports to the LLM with a different instruction:
+
+> *"Perceive the reports as a single picture, not a list of bullet points. Ask yourself: what story do they tell together? One strong signal — a macro regime shift, a large institutional flow — can outweigh several weak ones. Contradictions are normal: resolve them by asking which force is stronger right now, not who has more arguments. Act only when the picture forms a coherent story. If the picture is blurry — choose WAIT."*
+
+The model is explicitly told to reason through contradictions, not paper over them.
+
+## 🔬 Two-Stage Decision Pipeline
+
+Research alone is not enough to place a trade. Even a correct fundamental signal can arrive at a bad technical moment — the price just spiked 3% and chasing is dangerous. The pipeline separates these concerns:
+
+```
+Every 1m candle
+  │
+  ├─ Stage 1: RESEARCH  (daily, cached to disk)
+  │     8 agents run ReAct loops in parallel
+  │     Portfolio manager synthesises → BUY / SELL / WAIT
+  │     If WAIT → stop, no order
+  │
+  └─ Stage 2: POSITION  (hourly, cached in memory)
+        Last 240 one-minute candles → Markdown table → LLM
+        Technical entry filter: local extremes + momentum
+        → OPEN / WAIT
+        If WAIT → stop, no order
 ```
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
-| `--backtest` | boolean | — | Enable backtest mode |
-| `--symbol` | string | `BTCUSDT` | Trading pair |
-| `--strategy` | string | first registered | Strategy name from `addStrategySchema` |
-| `--exchange` | string | first registered | Exchange name from `addExchangeSchema` |
-| `--frame` | string | first registered | Frame name from `addFrameSchema` |
-| `--cacheInterval` | string | `1m, 15m, 30m, 1h, 4h` | Comma-separated intervals to pre-cache before the run |
-| `--noCache` | boolean | `false` | Skip candle cache warming |
-| `--verbose` | boolean | `false` | Log every candle fetch to stdout |
-| `--ui` | boolean | `false` | Start web dashboard at `http://localhost:60050` |
-| `--telegram` | boolean | `false` | Send trade notifications to Telegram |
+**Stage 1** answers: _"is the market fundamentally set up for a move?"_  
+**Stage 2** answers: _"is right now a good moment to enter, given the candle data?"_
 
-Before the backtest starts, the CLI warms the candle cache for every interval in `--cacheInterval`. On subsequent runs the cache is used directly — no extra API calls. Pass `--noCache` to skip this step.
+## 📐 Technical Entry Filter (Stage 2 in Detail)
 
-Module file `./modules/backtest.module.ts` (or `.mjs`) is loaded automatically if it exists.
+`PositionOutline` receives a step-by-step reasoning prompt — not just the data:
 
-### 📄 Paper Trading
+1. Find the local minimum among the last 30–60 candles
+2. Find the local maximum among the same candles
+3. Calculate `distance_to_high = (local_high − current_price) / current_price × 100`
+4. Evaluate momentum: are the last 5–10 candles predominantly in the signal direction?
 
-Connects to the live exchange but places no real orders. Identical code path to `--live` — safe for strategy validation.
+**OPEN** only when distance ≥ 1.5% AND momentum confirms AND price has not just made a sharp spike.  
+**WAIT** otherwise.
 
-```bash
-npm start -- --paper --symbol BTCUSDT --strategy feb_2026_strategy --exchange ccxt-exchange ./content/feb_2026.strategy.ts
-```
+The LLM must write its reasoning with explicit values — `local_min`, `local_high`, `current_price`, `distance_to_high` — before returning the decision. This is chain-of-thought enforced by the schema.
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
-| `--paper` | boolean | — | Enable paper trading mode |
-| `--symbol` | string | `BTCUSDT` | Trading pair |
-| `--strategy` | string | first registered | Strategy name |
-| `--exchange` | string | first registered | Exchange name |
-| `--verbose` | boolean | `false` | Log every candle fetch to stdout |
-| `--ui` | boolean | `false` | Start web dashboard |
-| `--telegram` | boolean | `false` | Enable Telegram notifications |
+## ⚡ Short-Term Event Signal (Optional Layer)
 
-Module file `./modules/paper.module.ts` is loaded automatically if it exists.
+A third pipeline — `signal(symbol, when)` — is available as a separate module. Unlike the daily research, it searches exclusively for **events from the last 4–12 hours**:
 
-### 📈 Live Trading
+- Exchange hacks or withdrawal suspensions
+- SEC / CFTC enforcement actions
+- Flash crash causes
+- Fed surprise decisions  
+- Unusual volume spikes
 
-Deploys a real trading bot. Requires exchange API keys in `.env`.
+The agent is explicitly told: _"do not search for inertial analytics — funding rates, liquidations, whale wallets are already priced in. Find what just happened."_
 
-```bash
-npm start -- --live --symbol BTCUSDT --ui --telegram ./content/feb_2026.strategy.ts
-```
+This pipeline is exported from `logic/index.ts` but intentionally left disconnected from the default strategy — it is a building block for layering an event-driven filter on top of the fundamental one.
 
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
-| `--live` | boolean | — | Enable live trading mode |
-| `--symbol` | string | `BTCUSDT` | Trading pair |
-| `--strategy` | string | first registered | Strategy name |
-| `--exchange` | string | first registered | Exchange name |
-| `--verbose` | boolean | `false` | Log every candle fetch to stdout |
-| `--ui` | boolean | `false` | Start web dashboard |
-| `--telegram` | boolean | `false` | Enable Telegram notifications |
+## 🏗️ Structured Output via Tool-Call Forcing
 
-Module file `./modules/live.module.ts` is loaded automatically if it exists. Use it to register a `Broker` adapter that intercepts every trade mutation before internal state changes — exchange rejection rolls back the operation atomically.
+Getting a language model to return valid, schema-conforming JSON reliably is non-trivial. This project uses `OllamaOutlineToolCompletion`:
 
-## 🌲 Running PineScript Indicators (`--pine`)
-
-Executes a local `.pine` file against a real exchange and prints the output as a Markdown table or saves it to a file.
-
-```bash
-npm start -- --pine ./math/feb_2026.pine --timeframe 15m --limit 500 --when "2026-02-28T00:00:00.000Z" --jsonl
-```
-
-Output file is created at `./math/dump/<name>.jsonl` (next to the `.pine` file).
-
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
-| `--pine` | boolean | — | Enable PineScript execution mode |
-| `--symbol` | string | `BTCUSDT` | Trading pair |
-| `--timeframe` | string | `15m` | Candle interval |
-| `--limit` | string | `250` | Number of candles to fetch |
-| `--when` | string | now | End date — ISO 8601 or Unix ms |
-| `--exchange` | string | first registered | Exchange name |
-| `--output` | string | `.pine` file name | Output file base name (no extension) |
-| `--json` | boolean | `false` | Save output as JSON array |
-| `--jsonl` | boolean | `false` | Save output as JSONL (one row per line) |
-| `--markdown` | boolean | `false` | Save output as Markdown table |
-
-Module file `./modules/pine.module.ts` is loaded automatically. The project includes it pre-configured with CCXT Binance. Override it to use a different exchange.
-
-Only `plot()` calls with `display=display.data_window` produce output columns:
-
-```pine
-plot(close,    "Close",    display=display.data_window)
-plot(position, "Position", display=display.data_window)
-```
-
-## 💾 Dumping Raw Candles (`--dump`)
-
-Fetches raw OHLCV candles from an exchange and saves them to a file.
-
-```bash
-npm start -- --dump --timeframe 15m --limit 500 --when "2026-02-28T00:00:00.000Z" --jsonl
-```
-
-Output file is created at `./dump/<name>.jsonl`.
-
-| Flag | Type | Default | Description |
-|------|------|---------|-------------|
-| `--dump` | boolean | — | Enable candle dump mode |
-| `--symbol` | string | `BTCUSDT` | Trading pair |
-| `--timeframe` | string | `15m` | Candle interval |
-| `--limit` | string | `250` | Number of candles |
-| `--when` | string | now | End date — ISO 8601 or Unix ms |
-| `--exchange` | string | first registered | Exchange name |
-| `--output` | string | `{SYMBOL}_{LIMIT}_{TIMEFRAME}_{TIMESTAMP}` | Output file base name |
-| `--json` | boolean | `false` | Save as JSON array |
-| `--jsonl` | boolean | `false` | Save as JSONL |
-
-Module file `./modules/dump.module.ts` is loaded automatically. The project includes it pre-configured with CCXT Binance.
-
-## 🧩 Module Hooks
-
-| File | Loaded by mode | Purpose |
-|------|----------------|---------|
-| `modules/backtest.module.ts` | `--backtest` | Register a `Broker` adapter for backtest |
-| `modules/paper.module.ts` | `--paper` | Register a `Broker` adapter for paper trading |
-| `modules/live.module.ts` | `--live` | Register a `Broker` adapter for live trading |
-| `modules/pine.module.ts` | `--pine` | Register an exchange schema for PineScript runs |
-| `modules/dump.module.ts` | `--dump` | Register an exchange schema for candle dumps |
-
-All files are optional — a missing module is a soft warning, not an error. Extensions `.ts`, `.mjs`, `.cjs` are tried automatically.
+1. The schema is wrapped into a `provide_answer` tool definition
+2. The model is told in a system prompt: _"ALWAYS call provide_answer. NEVER respond with plain text."_
+3. If the model ignores the tool and responds with text — a follow-up user message is injected and the request retries
+4. Malformed JSON is repaired with `jsonrepair` before schema validation
+5. Up to 3 attempts before throwing
+6. Thinking tokens (`think: true`) are preserved on the result object as `_thinking`
 
 ## 🌍 Environment Variables
 
-Create a `.env` file in the project root:
-
 ```env
-# Telegram notifications (required for --telegram)
+OLLAMA_TOKEN=your_ollama_token_here
+
+# Optional
 CC_TELEGRAM_TOKEN=your_bot_token_here
 CC_TELEGRAM_CHANNEL=-100123456789
-
-# Web UI server (optional, defaults shown)
-CC_WWWROOT_HOST=0.0.0.0
 CC_WWWROOT_PORT=60050
 ```
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `CC_TELEGRAM_TOKEN` | — | Telegram bot token (from @BotFather) |
-| `CC_TELEGRAM_CHANNEL` | — | Telegram channel or chat ID |
-| `CC_WWWROOT_HOST` | `0.0.0.0` | UI server bind address |
-| `CC_WWWROOT_PORT` | `60050` | UI server port |
+## 📋 Running
 
-
-## 🗂️ Project Structure
-
-```
-├── content/                  # Strategy entry points (.ts)
-│   └── feb_2026.strategy.ts
-├── docs/                     # Documentation
-│   ├── lib/                  # Auto-fetched library READMEs (via sync:lib)
-│   └── *.md                  # Backtest Kit how-to guides
-├── math/                     # PineScript indicator files (.pine)
-│   └── feb_2026.pine
-├── modules/                  # Side-effect module hooks (loaded automatically)
-│   ├── dump.module.ts        # Exchange schema for --dump mode
-│   └── pine.module.ts        # Exchange schema for --pine mode
-├── report/                   # Strategy research reports (.md)
-│   └── feb_2026.md
-├── scripts/
-│   └── fetch_docs.mjs        # Downloads library READMEs into docs/lib/
-├── CLAUDE.md                 # AI-agent guide for writing strategies
-└── package.json
-```
-
-## 📚 Updating Library Documentation
+See [DOCS.md](./DOCS.md) for CLI flags (`--backtest`, `--paper`, `--live`, `--pine`, `--dump`).
 
 ```bash
-npm run sync:lib
+npm start -- --backtest --symbol BTCUSDT --strategy feb_2026_strategy \
+  --exchange ccxt-exchange --frame feb_2026_frame \
+  ./content/feb_2026.strategy/feb_2026.strategy.ts
 ```
-
-Downloads the latest README files for all bundled libraries into `docs/lib/`. Run this after updating package versions or when you want fresh documentation available to the AI agent.
