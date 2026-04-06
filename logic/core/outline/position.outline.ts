@@ -190,12 +190,14 @@ addOutline<PositionResponseContract>({
         role: "user",
         content: LONG_POSITION_PROMPT,
       });
+      return;
     }
     if (research.signal === "SELL") {
       await history.push({
         role: "user",
         content: SHORT_POSITION_PROMPT,
       });
+      return;
     }
     throw new Error("Unsupported signal");
   },
