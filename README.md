@@ -96,20 +96,6 @@ Every 1m candle
 
 The LLM must write its reasoning with explicit values — `local_min`, `local_high`, `current_price`, `distance_to_high` — before returning the decision. This is chain-of-thought enforced by the schema.
 
-## ⚡ Short-Term Event Signal (Optional Layer)
-
-A third pipeline — `signal(symbol, when)` — is available as a separate module. Unlike the daily research, it searches exclusively for **events from the last 4–12 hours**:
-
-- Exchange hacks or withdrawal suspensions
-- SEC / CFTC enforcement actions
-- Flash crash causes
-- Fed surprise decisions  
-- Unusual volume spikes
-
-The agent is explicitly told: _"do not search for inertial analytics — funding rates, liquidations, whale wallets are already priced in. Find what just happened."_
-
-This pipeline is exported from `logic/index.ts` but intentionally left disconnected from the default strategy — it is a building block for layering an event-driven filter on top of the fundamental one.
-
 ## 🏗️ Structured Output via Tool-Call Forcing
 
 Getting a language model to return valid, schema-conforming JSON reliably is non-trivial. This project uses `OllamaOutlineToolCompletion`:
