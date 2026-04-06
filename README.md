@@ -1,4 +1,4 @@
-# 🧿 AI Fundamental Analysis via ReAct Agent Swarm
+# 🧿 AI Fundamental Analysis via Reason + Act Agent Swarm
 
 > A trading strategy built on the ReAct (Reason + Act) pattern: a swarm of LLM agents independently researches the market using iterative web search, then a portfolio manager LLM synthesises all findings into a single directional signal. No hardcoded indicators. No rule-based logic. Every decision is a reasoned conclusion.
 
